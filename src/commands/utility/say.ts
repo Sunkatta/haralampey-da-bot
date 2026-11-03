@@ -1,6 +1,6 @@
-const { SlashCommandBuilder } = require('discord.js');
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('say')
         .setDescription('Repeat a phrase')
@@ -11,11 +11,11 @@ module.exports = {
                 .setRequired(true),
         ),
 
-    async execute(interaction) {
+    async execute(interaction: ChatInputCommandInteraction) {
         try {
             const input = interaction.options.getString('input');
 
-            await interaction.reply(input);
+            await interaction.reply(input!);
         } catch (error) {
             console.error(error);
 

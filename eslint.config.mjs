@@ -1,12 +1,17 @@
-const js = require('@eslint/js');
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
-module.exports = [
+export default [
     js.configs.recommended,
+    ...tseslint.configs.recommended,
     {
+        files: ['**/*.ts', '**/*.tsx'],
         languageOptions: {
             ecmaVersion: 'latest',
         },
         rules: {
+            'no-unused-vars': 'off',
+            '@typescript-eslint/no-unused-vars': 'error',
             'arrow-spacing': ['warn', { before: true, after: true }],
             'brace-style': ['error', 'stroustrup', { allowSingleLine: true }],
             'comma-dangle': ['error', 'always-multiline'],
@@ -24,7 +29,10 @@ module.exports = [
             'no-inline-comments': 'error',
             'no-lonely-if': 'error',
             'no-multi-spaces': 'error',
-            'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1, maxBOF: 0 }],
+            'no-multiple-empty-lines': [
+                'error',
+                { max: 2, maxEOF: 1, maxBOF: 0 },
+            ],
             'no-shadow': ['error', { allow: ['err', 'resolve', 'reject'] }],
             'no-trailing-spaces': ['error'],
             'no-var': 'error',

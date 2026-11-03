@@ -1,10 +1,7 @@
-const { SlashCommandBuilder } = require('discord.js');
-const {
-    joinVoiceChannel,
-    getVoiceConnection
-} = require('@discordjs/voice');
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { joinVoiceChannel, getVoiceConnection } from '@discordjs/voice';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('join')
         .setDescription('Joins the specified channel')
@@ -16,11 +13,11 @@ module.exports = {
                 .setRequired(true)
         ),
 
-    async execute(interaction) {
+    async execute(interaction: ChatInputCommandInteraction) {
         try {
             await interaction.deferReply();
-            const channel = interaction.options.getChannel('channel');
-            const guildId = interaction.guildId;
+            const channel = interaction.options.getChannel('channel')!;
+            const guildId = interaction.guildId!;
             const voiceConnection = getVoiceConnection(guildId);
 
             if (voiceConnection) {
@@ -31,7 +28,7 @@ module.exports = {
             joinVoiceChannel({
                 channelId: channel.id,
                 guildId: guildId,
-                adapterCreator: interaction.guild.voiceAdapterCreator
+                adapterCreator: interaction.guild!.voiceAdapterCreator
             });
 
             // this.music_service.add_music_player(String(guildId));

@@ -1,18 +1,16 @@
-const { SlashCommandBuilder } = require('discord.js');
-const {
-    getVoiceConnection
-} = require('@discordjs/voice');
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { getVoiceConnection } from '@discordjs/voice';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('disconnect')
         .setDescription('Disconnect from the current voice channel'),
 
-    async execute(interaction) {
+    async execute(interaction: ChatInputCommandInteraction) {
         try {
             await interaction.deferReply();
 
-            const guildId = interaction.guildId;
+            const guildId = interaction.guildId!;
 
             const voiceConnection = getVoiceConnection(guildId);
 

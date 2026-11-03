@@ -1,6 +1,14 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, MessageFlags } = require('discord.js');
+import 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
+import { ChatInputCommandInteraction, Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+
+interface Command {
+    data: {
+        name: string;
+    };
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+}
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -22,7 +30,8 @@ for (const folder of commandFolders) {
     const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
+        const imported = require(filePath);
+        const command = (imported.default ?? imported) as Partial<Command>;
         // Set a new item in the Collection with the key as the command name and the value as the exported module
         if ('data' in command && 'execute' in command) {
             client.commands.set(command.data.name, command);
