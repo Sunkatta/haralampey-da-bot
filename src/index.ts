@@ -1,14 +1,19 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ChatInputCommandInteraction, Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Command } from './interfaces/command';
 
-interface Command {
-    data: {
-        name: string;
-    };
-    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+// Extend the Discord.js Client interface
+declare module 'discord.js' {
+    export interface Client {
+        commands: Collection<string, Command>;
+    }
 }
+
+dotenv.config({
+    path: path.resolve(__dirname, '.env'),
+});
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -17,9 +22,7 @@ client.once(Events.ClientReady, (readyClient) => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
-// Log in to Discord with your client's token
 client.login(process.env.BOT_AUTH_TOKEN);
-
 client.commands = new Collection();
 
 const foldersPath = path.join(__dirname, 'commands');
@@ -32,11 +35,17 @@ for (const folder of commandFolders) {
         const filePath = path.join(commandsPath, file);
         const imported = require(filePath);
         const command = (imported.default ?? imported) as Partial<Command>;
-        // Set a new item in the Collection with the key as the command name and the value as the exported module
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
+
+        if (
+            command.data &&
+            typeof command.data.name === 'string' &&
+            typeof command.execute === 'function'
+        ) {
+            client.commands.set(command.data.name, command as Command);
         } else {
-            console.warn(`The command at ${filePath} is missing a required "data" or "execute" property.`);
+            console.warn(
+                `The command at ${filePath} is missing a required "data" or "execute" property.`,
+            );
         }
     }
 }
