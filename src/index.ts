@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import fs from 'node:fs';
 import path from 'node:path';
-import { Client, Collection, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { Client, Collection, Events, GatewayIntentBits, MessageFlags, Snowflake } from 'discord.js';
 import { Command } from './interfaces/command';
 
 // Extend the Discord.js Client interface
@@ -15,8 +15,18 @@ dotenv.config({
     path: path.resolve(__dirname, '.env'),
 });
 
+/**
+ * The ids of the users that can be recorded by the bot.
+ */
+const recordable = new Set<Snowflake>();
+
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+    ]
+});
 
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
@@ -61,7 +71,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     try {
-        await command.execute(interaction);
+        await command.execute(interaction, recordable);
     } catch (error) {
         console.error(error);
 

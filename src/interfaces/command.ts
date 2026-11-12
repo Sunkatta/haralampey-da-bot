@@ -1,8 +1,8 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, Snowflake } from "discord.js";
 
 export interface Command {
     data: {
         name: string;
     };
-    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+    execute: (interaction: ChatInputCommandInteraction, recordable: Set<Snowflake>) => Promise<void>;
 }

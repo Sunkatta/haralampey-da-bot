@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from 'discord.js';
 
 export default {
     data: new SlashCommandBuilder()
@@ -11,7 +11,7 @@ export default {
                 .setRequired(true),
         ),
 
-    async execute(interaction: ChatInputCommandInteraction) {
+    async execute(interaction: ChatInputCommandInteraction, _: Set<Snowflake>) {
         try {
             const input = interaction.options.getString('input');
 

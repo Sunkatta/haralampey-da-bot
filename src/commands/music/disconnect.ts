@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from 'discord.js';
 import { getVoiceConnection } from '@discordjs/voice';
 
 export default {
@@ -6,7 +6,7 @@ export default {
         .setName('disconnect')
         .setDescription('Disconnect from the current voice channel'),
 
-    async execute(interaction: ChatInputCommandInteraction) {
+    async execute(interaction: ChatInputCommandInteraction, _: Set<Snowflake>) {
         try {
             await interaction.deferReply();
 
